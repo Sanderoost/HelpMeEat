@@ -15,8 +15,7 @@ restService.use(bodyParser.json());
 
 restService.post("/hoi", function(req, res) {
     let title = req.body.result.parameters.AudioSample.toLowerCase();
-    title = "chicken"
-
+    if (title = "chicken") {
     request('https://www.food2fork.com/api/search?key=63c748f9988ed0a2866e6b3db825b5ac&q=' + title , function (error, response, body) {
       let obj = JSON.parse(body);
       if(obj.count > 1){
@@ -34,6 +33,7 @@ restService.post("/hoi", function(req, res) {
         return res.responseObj;
       }
     });
+  }
 });
 
 function returnRecipe(search){
