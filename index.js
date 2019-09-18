@@ -2,8 +2,7 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const axios = require('axios');
-
+const request = require('request');
 const restService = express();
 
 restService.use(
@@ -14,33 +13,53 @@ restService.use(
 
 restService.use(bodyParser.json());
 
-restService.post("/imdb", function(req, res) {
+restService.post("/hoi", function(req, res) {
     let title = req.body.result.parameters.AudioSample.toLowerCase();
-    let api = "http://www.omdbapi.com/?t=" + title + "&apikey=fa194e9c";
-    var speech = "";
-      axios.get(api)
-       .then(function(response) { 
-            speech = response.data.Title;
+    title = "chicken"
 
-              return res.json({
-              speech: speech,
-              displayText: speech,
-              source: "webhook-echo-sample"
-            });
-          function done(err, data) {
-            if (err) {
-              console.log(err);
-            } else {
-              res.redirect("/");
-            }
-          }
-        })
-      .catch(data => {
-        console.log(error.response.data);
-      });
+    request('https://www.food2fork.com/api/search?key=63c748f9988ed0a2866e6b3db825b5ac&q=' + title , function (error, response, body) {
+      let obj = JSON.parse(body);
+      if(obj.count > 1){
+        return "No results for " + search;
+      }
+      else{
+        let rand = obj.recipes[Math.floor(Math.random() * obj.recipes.length)]
+        let responseObj={
+            "fulfillmentText": "  "
+            ,"fulfillmentMessages": [{"text": {"text": [rand.title]}}]
+            ,"source": " "
 
+        }
+        console.log(responseObj);
+        return res.responseObj;
+      }
+    });
 });
 
-restService.listen(process.env.PORT || 8000, function() {
+function returnRecipe(search){
+  request('https://www.food2fork.com/api/search?key=63c748f9988ed0a2866e6b3db825b5ac&q=' + search , function (error, response, body) {
+    let obj = JSON.parse(body);
+    if(obj.count > 1){
+      return "No results for " + search;
+    }
+    else{
+      let rand = obj.recipes[Math.floor(Math.random() * obj.recipes.length)]
+      let responseObj={
+          "fulfillmentText": "  "
+          ,"fulfillmentMessages": [{"text": {"text": [rand.title]}}]
+          ,"source": " "
+
+      }
+      return res.responseObj;
+    }
+  });
+}
+
+
+restService.listen(8000, function() {
   console.log("Server up and listening");
+    // let title = req.body.result.parameters.AudioSample.toLowerCase();
+    // var search = "chicken"
+    // var speech = returnRecipe(search);
+    // console.log(speech)
 });
